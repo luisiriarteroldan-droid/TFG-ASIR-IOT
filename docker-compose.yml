@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # El Broker (El que recibe los mensajes de los sensores)
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto_tfg
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+
+  # La Base de Datos (InfluxDB)
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb_tfg
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+
+  # El Panel de Control (Grafana)
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana_tfg
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influxdb
+
+volumes:
+  influxdb_data:
